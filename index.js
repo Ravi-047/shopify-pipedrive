@@ -16,7 +16,6 @@ async function getShopifyOrder(orderId) {
                 'Content-Type': 'application/json',
             }
         });
-        console.log(response.data.order.customer);
         return response.data.order;
     } catch (error) {
         throw new Error(`Failed to fetch Shopify order: ${error.message}`);
@@ -66,6 +65,7 @@ async function findOrCreatePersonInPipedrive(shopifyCustomer) {
 async function findOrCreateProductInPipedrive(lineItem) {
     const { sku, name, price } = lineItem;
 
+
     try {
         // Check if product already exists in Pipedrive by code (equivalent to Shopify SKU)
         const existingProductResponse = await axios.get('https://commercial-saw.pipedrive.com/api/v1/products/search', {
@@ -76,6 +76,7 @@ async function findOrCreateProductInPipedrive(lineItem) {
         });
 
         const existingProduct = existingProductResponse.data.data.items;
+
 
         if (existingProduct.length > 0) {
             // Product already exists, return the existing product data
@@ -103,30 +104,34 @@ async function findOrCreateProductInPipedrive(lineItem) {
 
 // Function to create a deal in Pipedrive
 async function createDealInPipedrive(person, lineItems) {
+
+
     try {
         const dealPayload = {
-            title: 'My Deal', // Set the desired title for the deal
+            title: 'My Deal',
             person_id: person.id
         };
+
 
         const createDealResponse = await axios.post(`https://commercial-saw.pipedrive.com/api/v1/deals?api_token=${PIPEDRIVE_API_TOKEN}`, {
             ...dealPayload
         });
 
         const newDeal = createDealResponse.data.data;
-        console.log(newDeal);
+
 
         // Attach products to the deal
         for (const lineItem of lineItems) {
             const product = await findOrCreateProductInPipedrive(lineItem);
 
             const attachProductResponse = await axios.post(`https://commercial-saw.pipedrive.com/api/v1/deals/${newDeal.id}/products?api_token=${PIPEDRIVE_API_TOKEN}`, {
-                product_id: product.id,
-                item_price: product.price,
-                quantity: product.quantity
+                product_id: product.item.id,
+                item_price: lineItem.price,
+                quantity: lineItem.quantity
             });
 
-            console.log(`Product '${product.name}' attached to the deal.`);
+
+            console.log(`Product '${product.item.name}' attached to the deal.`);
         }
 
         return newDeal;
@@ -147,11 +152,12 @@ async function createDealInPipedrive(person, lineItems) {
 
         // Step 3: Find or create products in Pipedrive and attach them to the deal
         const lineItems = shopifyOrder.line_items;
-        const newDeal = await createDealInPipedrive(pipedrivePerson, lineItems);
 
-        console.log('Shopify Order:', shopifyOrder);
-        console.log('Pipedrive Person:', pipedrivePerson);
-        console.log('Created Pipedrive Deal:', newDeal);
+        const newDeal = await createDealInPipedrive(pipedrivePerson.item, lineItems);
+
+        // console.log('Shopify Order: --------', shopifyOrder);
+        // console.log('Pipedrive Person: --------', pipedrivePerson);
+        // console.log('Created Pipedrive Deal:', newDeal);
     } catch (error) {
         console.error(error);
     }
