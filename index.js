@@ -25,7 +25,6 @@ async function getShopifyOrder(orderId) {
 // Function to find or create a person in Pipedrive
 async function findOrCreatePersonInPipedrive(shopifyCustomer) {
     const { email, first_name, last_name, phone } = shopifyCustomer;
-
     try {
         // Check if person already exists in Pipedrive by email
         const existingPersonResponse = await axios.get(`https://commercial-saw.pipedrive.com/api/v1/persons/search`, {
@@ -64,8 +63,6 @@ async function findOrCreatePersonInPipedrive(shopifyCustomer) {
 // Function to find or create a product in Pipedrive
 async function findOrCreateProductInPipedrive(lineItem) {
     const { sku, name, price } = lineItem;
-
-
     try {
         // Check if product already exists in Pipedrive by code (equivalent to Shopify SKU)
         const existingProductResponse = await axios.get('https://commercial-saw.pipedrive.com/api/v1/products/search', {
@@ -104,8 +101,6 @@ async function findOrCreateProductInPipedrive(lineItem) {
 
 // Function to create a deal in Pipedrive
 async function createDealInPipedrive(person, lineItems) {
-
-
     try {
         const dealPayload = {
             title: 'My Deal',
