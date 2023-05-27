@@ -1,10 +1,10 @@
 const axios = require('axios');
+require("dotenv").config()
 
+const SHOPIFY_TOKEN = process.env.SHOPIFY_TOKEN
+const PIPEDRIVE_API_TOKEN = process.env.PIPEDRIVE_API_TOKEN
 
-const SHOPIFY_TOKEN = "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"
-const PIPEDRIVE_API_TOKEN = "016020ad5cf63aca20b6211d807d2ae578105006"
-
-const orderID = 5316355457315
+const orderID = process.env.ORDER_ID
 
 
 // Function to fetch Shopify order details

@@ -19,7 +19,8 @@
   },
   "homepage": "https://github.com/Ravi-047/shopify-pipedrive#readme",
   "dependencies": {
-    "axios": "^1.4.0"
+    "axios": "^1.4.0",
+    "dotenv": "^16.0.3"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
